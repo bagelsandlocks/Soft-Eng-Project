@@ -1,27 +1,26 @@
 {
-  "name": "hangmangui",
+  "name": "soft-eng-project",
   "version": "0.1.0",
-  "homepage": ".",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+  "bin": {
+    "soft-eng-project": "bin/soft-eng-project.js"
   },
-  "dependencies": {
-    "axios": "^1.12.2",
-    "next": "15.5.4",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.4",
-    "typescript": "^5"
+    "@types/jest": "^29.5.14",
+    "@types/node": "^24.10.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "aws-cdk": "2.1033.0",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.9.3"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.215.0",
+    "constructs": "^10.0.0"
   }
 }
