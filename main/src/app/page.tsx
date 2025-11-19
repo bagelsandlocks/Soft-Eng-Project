@@ -1,66 +1,192 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'                              // directive to clarify client-side. Place at top of ALL .tsx files
+import React from 'react'
+import { instance } from '../lib/aws'          // centralize access to instance
+import axios from "axios"
+import { Shopper } from '../model'
+import { Receipt } from '../model'
+import { Item } from '../model'
 
-export default function Home() {
+/******************************Register and login********************************************* */
+function LoginRegister() {
+  // Login and Registration Use Cases
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [conpassword, setConPassword] = React.useState("");
+  const [registerOutput, setRegisterOutput] = React.useState<any>(null);
+
+  const [logusername, setLogUsername] = React.useState("");
+  const [logpassword, setLogPassword] = React.useState("");
+  const [loginOutput, setLoginOutput] = React.useState<any>(null);
+
+
+  async function createShopper() {
+    if(password !== conpassword){
+      alert("Passwords do not match!");
+      return;
+    }
+    try {
+      const response = await instance.post("/RegisterShopper", {
+        username: username,
+        password: password,
+      });
+      setRegisterOutput(response.data);
+    } catch (err:any) {
+      setRegisterOutput({ error: err.message });
+    }
+  }
+
+  async function loginShopper() {
+    try {
+      const response = await instance.post('/LoginShopper', {
+        username: logusername,
+        password: logpassword,
+      });
+      setLoginOutput(response.data);
+    } catch (err:any) {
+      setLoginOutput({ error: err.message });
+    }
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div>
+      <h1>Shopper Login Page</h1>
+      <>Shopper Register</><br />
+      <input placeholder="username" onChange={e=>setUsername(e.target.value)} /><br />
+      <input placeholder="password" onChange={e=>setPassword(e.target.value)} /><br />
+      <input placeholder="confirm password" onChange={e=>setConPassword(e.target.value)} /><br />
+      <button onClick={createShopper}>Register</button><br />
+      <pre>{registerOutput && JSON.stringify(registerOutput, null, 2)}</pre><br />
+      <>Shopper Login</><br />
+      <input placeholder="username" onChange={e=>setLogUsername(e.target.value)} /><br />
+      <input placeholder="password" onChange={e=>setLogPassword(e.target.value)} /><br />
+      <button onClick={loginShopper}>Login</button><br />
+      <pre>{loginOutput && JSON.stringify(loginOutput, null, 2)}</pre>
+    </div>  
+  )
+}
+
+
+/******************************ItemList********************************************* */
+function ItemList(props: { items: Array<{ name: string; id: String; price: number; quantity: number }> }) {
+  if (props.items.length === 0) {
+    return <div>Loading...</div>;
+  }
+  let items = props.items as Array<Item>;
+
+  return (
+    <div>
+      <h2>Items in Receipt</h2>
+      <ul>
+        {items.map((item, index) => (
+          <li key={index}>
+            {item.id}:{item.name} - ${item.price} x {item.quantity}
+          </li>
+        ))}
+      </ul>
+
     </div>
   );
+}
+
+function retrieveItems(
+  receiptID: string,
+  setItems: (items: Array<Item>) => void
+) {
+  instance.post('list-items', { receiptID })
+    .then(response => {
+      let status = response.data.statusCode;
+
+      if (status === 200) {
+        let vals = JSON.parse(response.data.body);
+
+        let ret: Array<Item> = vals.items.map((i:any) =>
+          new Item(i.name, i.id, i.price, i.quantity)
+        );
+
+        setItems(ret);
+      }
+    })
+    .catch(error => {
+      console.error("Error retrieving items:", error);
+      setItems([]);
+    });
+}
+
+/******************************Receipt********************************************* */
+function ReceiptDisplay() {
+  const [items, setItems] = React.useState<Array<Item>>([]);
+  const [itemName, setItemName] = React.useState("");
+  const [itemID, setItemID] = React.useState("");
+  const [itemPrice, setItemPrice] = React.useState(0);
+  const [quantity, setQuantity] = React.useState(0);
+  const [receipt, setReceipt] = React.useState<Receipt | null>(null);
+
+  const receiptID = receipt?.receiptID ?? "";
+
+  function createReceipt() {
+    instance.post('/CreateReceipt', {})
+      .then(response => {
+        if (response.data.statusCode === 200) {
+          alert("Receipt created!");
+        }
+        setReceipt(response.data);   
+        setItems([]);
+      })
+      .catch(error => console.error("Error creating receipt:", error));
+  }
+
+  React.useEffect(() => {
+    if (receiptID) {
+      retrieveItems(receiptID, setItems);
+    }
+  }, [receiptID]);
+
+  function addItem() {
+    if (!receiptID) {
+      alert("Create a receipt first!");
+      return;
+    }
+
+    instance.post('/AddItem', {
+      receiptID,
+      name: itemName,
+      id: itemID,
+      price: itemPrice,
+      quantity
+    })
+    .then(response => {
+      if (response.data.statusCode === 200) {
+        retrieveItems(receiptID, setItems);
+      }
+    })
+    .catch(error => console.error("Error adding item:", error));
+  }
+
+  return (
+    <div>
+      <h1>Receipt Dashboard</h1>
+
+      <button onClick={createReceipt}>Create Receipt</button><br />
+
+      <input placeholder="item name" onChange={e => setItemName(e.target.value)} /><br/>
+      <input placeholder="item price" type="number" onChange={e => setItemPrice(Number(e.target.value))} /><br/>
+      <input placeholder="item quantity" type="number" onChange={e => setQuantity(Number(e.target.value))} /><br/>
+      <input placeholder="item ID" onChange={e => setItemID(e.target.value)} /><br/>
+
+      <button onClick={addItem} disabled={!receiptID}>Add Item</button>
+
+      <ItemList items={items} />
+    </div>
+  );
+}
+
+/************************************************************************************ */
+/******************************Home Page********************************************* */
+export default function Home() {
+  return(
+    <div>
+      <LoginRegister />
+      <ReceiptDisplay />
+    </div>    
+    )
 }
