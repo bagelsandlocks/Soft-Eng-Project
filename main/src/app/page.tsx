@@ -1,6 +1,6 @@
 'use client'                              // directive to clarify client-side. Place at top of ALL .tsx files
 import React from 'react'
-import { instance } from '../lib/aws'          // centralize access to instance
+import { instance } from './aws'          // centralize access to instance
 import axios from "axios"
 import { Shopper } from '../model'
 import { Receipt } from '../model'
@@ -67,11 +67,12 @@ function LoginRegister() {
 
 
 /******************************ItemList********************************************* */
-function ItemList(props: { items: Array<{ name: string; id: String; price: number; quantity: number }> }) {
+function ItemList(props: { items: Array<Item>, onRemove: (id: string) => void, onEdit: (item: Item) => void }) {
   if (props.items.length === 0) {
     return <div>Loading...</div>;
   }
   let items = props.items as Array<Item>;
+
 
   return (
     <div>
@@ -80,7 +81,9 @@ function ItemList(props: { items: Array<{ name: string; id: String; price: numbe
         {items.map((item, index) => (
           <li key={index}>
             {item.id}:{item.name} - ${item.price} x {item.quantity}
-          </li>
+            <button onClick={() => props.onRemove(item.id)}>Remove</button>
+            <button onClick={() => props.onEdit(item)}>Edit</button>
+          </li>          
         ))}
       </ul>
 
@@ -135,12 +138,14 @@ function ReceiptDisplay() {
       .catch(error => console.error("Error creating receipt:", error));
   }
 
+
   React.useEffect(() => {
     if (receiptID) {
       retrieveItems(receiptID, setItems);
     }
   }, [receiptID]);
 
+  // remove & edit & add Item 
   function addItem() {
     if (!receiptID) {
       alert("Create a receipt first!");
@@ -152,7 +157,7 @@ function ReceiptDisplay() {
       name: itemName,
       id: itemID,
       price: itemPrice,
-      quantity
+      quantity: quantity
     })
     .then(response => {
       if (response.data.statusCode === 200) {
@@ -162,23 +167,108 @@ function ReceiptDisplay() {
     .catch(error => console.error("Error adding item:", error));
   }
 
+
+  function removeItem(itemID: string) {
+    if (!receiptID) {
+      alert("Create a receipt first!");
+      return;
+    }
+
+    instance.post('/RemoveItem', {
+      receiptID,
+      newid: itemID,
+    })
+    .then(response => {
+      if (response.data.statusCode === 200) {
+        retrieveItems(receiptID, setItems);
+      }
+    })
+    .catch(error => console.error("Error removing item:", error));
+  }
+
+  function editItem(item: Item) {
+    if (!receiptID) {
+      alert("Create a receipt first!");
+      return;
+    }
+
+    instance.post('/EditItem', {
+      receiptID,
+      newid: item.id,
+      newquantity: item.quantity,
+      newprice: item.price,
+      newname: item.name
+    })
+    .then(response => {
+      if (response.data.statusCode === 200) {
+        retrieveItems(receiptID, setItems);
+      }
+    })
+    .catch(error => console.error("Error editing item:", error));
+  }
+
+
+  //submit & analyze receipt
+  function submitReceipt() {
+    if (!receiptID) {
+      alert("Create a receipt first!");
+      return;
+    }
+  instance.post("/SubmitReceipt", { receiptID })
+    .then(res => {
+      if (res.data.statusCode === 200) {
+        alert("Receipt submitted!");
+      }
+    })
+  }
+
+  function analyzeReceipt() {
+    if (!receiptID) {
+      alert("Create a receipt first!");
+      return;
+    }
+    instance.post("/AnalyzeReceipt", { receiptID })
+      .then(res => {
+        if (res.data.statusCode === 200) {
+          alert("Receipt analyzed!");
+        }
+      })
+  }
+
   return (
     <div>
       <h1>Receipt Dashboard</h1>
 
       <button onClick={createReceipt}>Create Receipt</button><br />
 
-      <input placeholder="item name" onChange={e => setItemName(e.target.value)} /><br/>
-      <input placeholder="item price" type="number" onChange={e => setItemPrice(Number(e.target.value))} /><br/>
-      <input placeholder="item quantity" type="number" onChange={e => setQuantity(Number(e.target.value))} /><br/>
-      <input placeholder="item ID" onChange={e => setItemID(e.target.value)} /><br/>
+      <input placeholder="item name" disabled={!receiptID} onChange={e => setItemName(e.target.value)}  /><br/>
+      <input placeholder="item price" type="number" disabled={!receiptID} onChange={e => setItemPrice(Number(e.target.value))} /><br/>
+      <input placeholder="item quantity" type="number" disabled={!receiptID} onChange={e => setQuantity(Number(e.target.value))} /><br/>
+      <input placeholder="item ID" disabled={!receiptID} onChange={e => setItemID(e.target.value)} /><br/>
 
       <button onClick={addItem} disabled={!receiptID}>Add Item</button>
 
-      <ItemList items={items} />
+
+      <ItemList items={items}
+       onRemove={removeItem} onEdit={(item) => {
+          const newName = prompt("New name", item.name) ?? item.name;
+          const newPrice = Number(prompt("New price", item.price.toString()) ?? item.price);
+          const newQty = Number(prompt("New quantity", item.quantity.toString()) ?? item.quantity);
+
+          let updated = new Item(newName, item.id, newPrice, newQty);
+          editItem(updated);
+        }}
+   />
+      <button onClick={submitReceipt} disabled={!receiptID}>Submit Receipt</button><br />
+      <button onClick={analyzeReceipt} disabled={!receiptID}>Analyze Receipt</button>
     </div>
   );
 }
+
+/***************************************Reciept List****************************** */
+
+/**************************************Account Dashboard************************** */
+
 
 /************************************************************************************ */
 /******************************Home Page********************************************* */
