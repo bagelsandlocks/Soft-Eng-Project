@@ -2,9 +2,9 @@
 import React from 'react'
 import { instance } from './aws'          // centralize access to instance
 import axios from "axios"
-import { Shopper } from '../model'
-import { Receipt } from '../model'
-import { Item } from '../model'
+import { Shopper } from './model'
+import { Receipt } from './model'
+import { Item } from './model'
 
 /******************************Register and login********************************************* */
 function LoginRegister() {
