@@ -1,0 +1,9 @@
+{
+  "name": "register_shopper",
+  "version": "1.0.0",
+  "description": "Lambda function to create shoppers in the ShopComp database",
+  "main": "register_shopper.mjs",
+  "dependencies": {
+    "mysql2": "^3.15.1"
+  }
+}
