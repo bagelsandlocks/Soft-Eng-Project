@@ -25,7 +25,7 @@ function LoginRegister() {
       return;
     }
     try {
-      const response = await instance.post("/RegisterShopper", {
+      const response = await instance.post("/registerShopper", {
         username: username,
         password: password,
       });
@@ -37,7 +37,7 @@ function LoginRegister() {
 
   async function loginShopper() {
     try {
-      const response = await instance.post('/LoginShopper', {
+      const response = await instance.post('/loginShopper', {
         username: logusername,
         password: logpassword,
       });
@@ -127,7 +127,7 @@ function ReceiptDisplay() {
   const receiptID = receipt?.receiptID ?? "";
 
   function createReceipt() {
-    instance.post('/CreateReceipt', {})
+    instance.post('/createReceipt', {})
       .then(response => {
         if (response.data.statusCode === 200) {
           alert("Receipt created!");
@@ -152,7 +152,7 @@ function ReceiptDisplay() {
       return;
     }
 
-    instance.post('/AddItem', {
+    instance.post('/addItem', {
       receiptID,
       name: itemName,
       id: itemID,
@@ -174,7 +174,7 @@ function ReceiptDisplay() {
       return;
     }
 
-    instance.post('/RemoveItem', {
+    instance.post('/removeItem', {
       receiptID,
       newid: itemID,
     })
@@ -192,7 +192,7 @@ function ReceiptDisplay() {
       return;
     }
 
-    instance.post('/EditItem', {
+    instance.post('/editItem', {
       receiptID,
       newid: item.id,
       newquantity: item.quantity,
@@ -214,7 +214,7 @@ function ReceiptDisplay() {
       alert("Create a receipt first!");
       return;
     }
-  instance.post("/SubmitReceipt", { receiptID })
+  instance.post("/submitReceipt", { receiptID })
     .then(res => {
       if (res.data.statusCode === 200) {
         alert("Receipt submitted!");
@@ -227,7 +227,7 @@ function ReceiptDisplay() {
       alert("Create a receipt first!");
       return;
     }
-    instance.post("/AnalyzeReceipt", { receiptID })
+    instance.post("/analyzeReceipt", { receiptID })
       .then(res => {
         if (res.data.statusCode === 200) {
           alert("Receipt analyzed!");
