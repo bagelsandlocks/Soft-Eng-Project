@@ -59,35 +59,35 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     //Shopper Use Cases
     const shopcompResource = api_endpoint.root.addResource('shopcomp')
-    const registerShopperResource = shopcompResource.addResource('RegisterShopper')
-    const loginShopperResource = shopcompResource.addResource('LoginShopper')
-    const reviewHistoryResource = shopcompResource.addResource('ReviewHistory')
-    const reviewActivityResource = shopcompResource.addResource('ReviewActivity')
-    const searchRecentPurchasesResource = shopcompResource.addResource('SearchRecentPurchases')
+    const registerShopperResource = shopcompResource.addResource('register_shopper')
+    const loginShopperResource = shopcompResource.addResource('login_shopper')
+    const reviewHistoryResource = shopcompResource.addResource('review_history')
+    const reviewActivityResource = shopcompResource.addResource('review_activity')
+    const searchRecentPurchasesResource = shopcompResource.addResource('search_recent_purchases')
 
     //Receipt Use Cases
-    const createReceiptResource = shopcompResource.addResource('CreateReceipt')
-    const addItemResource = shopcompResource.addResource('AddItem')
-    const removeItemResource = shopcompResource.addResource('RemoveItem')
-    const editItemResource = shopcompResource.addResource('EditItem')
-    const submitReceiptResource = shopcompResource.addResource('SubmitReceipt')
-    const analyzeReceiptResource = shopcompResource.addResource('AnalyzeReceipt')
+    const createReceiptResource = shopcompResource.addResource('create_receipt')
+    const addItemResource = shopcompResource.addResource('add_item')
+    const removeItemResource = shopcompResource.addResource('remove_item')
+    const editItemResource = shopcompResource.addResource('edit_item')
+    const submitReceiptResource = shopcompResource.addResource('submit_receipt')
+    const analyzeReceiptResource = shopcompResource.addResource('analyze_receipt')
 
     //Shopping List Use Cases
-    const createShoppingListResource = shopcompResource.addResource('CreateShoppingList')
-    const addToListResource = shopcompResource.addResource('AddToList')
-    const removeFromListResource = shopcompResource.addResource('RemoveFromList')
-    const reportOptionsResource = shopcompResource.addResource('ReportOptions')
+    const createShoppingListResource = shopcompResource.addResource('create_shopping_list')
+    const addToListResource = shopcompResource.addResource('add_to_list')
+    const removeFromListResource = shopcompResource.addResource('remove_from_list')
+    const reportOptionsResource = shopcompResource.addResource('report_options')
 
     //Store Use Cases
-    const listStoreChainsResource = shopcompResource.addResource('ListStoreChains')
-    const addStoreChainResource = shopcompResource.addResource('AddStoreChain')
-    const addStoreResource = shopcompResource.addResource('AddStore')
+    const listStoreChainsResource = shopcompResource.addResource('list_store_chains')
+    const addStoreChainResource = shopcompResource.addResource('add_store_chain')
+    const addStoreResource = shopcompResource.addResource('add_store')
 
     //Admin Use Cases
-    const loginAdminResource = shopcompResource.addResource('LoginAdmin')
-    const removeStoreChainResource = shopcompResource.addResource('RemoveStoreChain')
-    const removeStoreResource = shopcompResource.addResource('RemoveStore')
+    const loginAdminResource = shopcompResource.addResource('login_admin')
+    const removeStoreChainResource = shopcompResource.addResource('remove_store_chain')
+    const removeStoreResource = shopcompResource.addResource('remove_store')
 
 
     // https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/aws-apigateway/README.md
@@ -181,8 +181,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const register_shopper_fn = new lambdaNodejs.NodejsFunction(this, 'RegisterShopperFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'RegisterShopper.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'RegisterShopper')),
+      handler: 'register_shopper.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'register_shopper')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -199,8 +199,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const login_shopper_fn = new lambdaNodejs.NodejsFunction(this, 'LoginShopperFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'LoginShopper.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'LoginShopper')),
+      handler: 'login_shopper.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'login_shopper')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -217,8 +217,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const review_history_fn = new lambdaNodejs.NodejsFunction(this, 'ReviewHistoryFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'ReviewHistory.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'ReviewHistory')),
+      handler: 'review_history.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'review_history')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -235,8 +235,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const review_activity_fn = new lambdaNodejs.NodejsFunction(this, 'ReviewActivityFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'ReviewActivity.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'ReviewActivity')),
+      handler: 'review_activity.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'review_activity')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -253,8 +253,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const search_recent_purchases_fn = new lambdaNodejs.NodejsFunction(this, 'SearchRecentPurchasesFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'SearchRecentPurchases.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'SearchRecentPurchases')),
+      handler: 'search_recent_purchases.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'search_recent_purchases')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -271,8 +271,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const create_receipt_fn = new lambdaNodejs.NodejsFunction(this, 'CreateReceiptFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'CreateReceipt.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'CreateReceipt')),
+      handler: 'create_receipt.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'create_receipt')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -289,8 +289,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const add_item_fn = new lambdaNodejs.NodejsFunction(this, 'AddItemFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'AddItem.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'AddItem')),
+      handler: 'add_item.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'add_item')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -307,8 +307,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const edit_item_fn = new lambdaNodejs.NodejsFunction(this, 'EditItemFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'EditItem.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'EditItem')),
+      handler: 'edit_item.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'edit_item')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -325,8 +325,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const remove_item_fn = new lambdaNodejs.NodejsFunction(this, 'RemoveItemFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'RemoveItem.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'RemoveItem')),
+      handler: 'remove_item.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'remove_item')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -343,8 +343,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const submit_receipt_fn = new lambdaNodejs.NodejsFunction(this, 'SubmitReceiptFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'SubmitReceipt.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'SubmitReceipt')),
+      handler: 'submit_receipt.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'submit_receipt')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -361,8 +361,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const analyze_receipt_fn = new lambdaNodejs.NodejsFunction(this, 'AnalyzeReceiptFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'AnalyzeReceipt.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'AnalyzeReceipt')),
+      handler: 'analyze_receipt.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'analyze_receipt')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -379,8 +379,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const create_shopping_list_fn = new lambdaNodejs.NodejsFunction(this, 'CreateShoppingListFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'CreateShoppingList.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'CreateShoppingList')),
+      handler: 'create_shopping_list.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'create_shopping_list')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -397,8 +397,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const add_to_list_fn = new lambdaNodejs.NodejsFunction(this, 'AddToListFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'AddToList.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'AddToList')),
+      handler: 'add_to_list.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'add_to_list')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -415,8 +415,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const remove_from_list_fn = new lambdaNodejs.NodejsFunction(this, 'RemoveFromListFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'RemoveFromList.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'RemoveFromList')),
+      handler: 'remove_from_list.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'remove_from_list')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -433,8 +433,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const report_options_fn = new lambdaNodejs.NodejsFunction(this, 'ReportOptionsFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'ReportOptions.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'ReportOptions')),
+      handler: 'report_options.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'report_options')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -451,8 +451,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const list_store_chains_fn = new lambdaNodejs.NodejsFunction(this, 'ListStoreChainsFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'ListStoreChains.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'ListStoreChains')),
+      handler: 'list_store_chains.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'list_store_chains')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -469,8 +469,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const add_store_chain_fn = new lambdaNodejs.NodejsFunction(this, 'AddStoreChainFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'AddStoreChain.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'AddStoreChain')),
+      handler: 'add_store_chain.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'add_store_chain')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -487,8 +487,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const add_store_fn = new lambdaNodejs.NodejsFunction(this, 'AddStoreFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'AddStore.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'AddStore')),
+      handler: 'add_store.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'add_store')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -505,8 +505,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const login_admin_fn = new lambdaNodejs.NodejsFunction(this, 'LoginAdminFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'LoginAdmin.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'LoginAdmin')),
+      handler: 'login_admin.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'login_admin')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -523,8 +523,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const remove_store_chain_fn = new lambdaNodejs.NodejsFunction(this, 'RemoveStoreChainFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'RemoveStoreChain.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'RemoveStoreChain')),
+      handler: 'remove_store_chain.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'remove_store_chain')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
@@ -541,8 +541,8 @@ export class SoftEngProjectStack extends cdk.Stack {
 
     const remove_store_fn = new lambdaNodejs.NodejsFunction(this, 'RemoveStoreFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'RemoveStore.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'RemoveStore')),
+      handler: 'remove_store.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'remove_store')),
       vpc: vpc,             // Reference the VPC defined above
       environment: {
           // Define your environment variables here
