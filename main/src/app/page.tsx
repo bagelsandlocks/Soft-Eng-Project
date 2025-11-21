@@ -25,7 +25,7 @@ function LoginRegister() {
       return;
     }
     try {
-      const response = await instance.post("/registerShopper", {
+      const response = await instance.post("/register_shopper", {
         username: username,
         password: password,
       });
@@ -37,7 +37,7 @@ function LoginRegister() {
 
   async function loginShopper() {
     try {
-      const response = await instance.post('/loginShopper', {
+      const response = await instance.post('/login_shopper', {
         username: logusername,
         password: logpassword,
       });
@@ -95,7 +95,7 @@ function retrieveItems(
   receiptID: string,
   setItems: (items: Array<Item>) => void
 ) {
-  instance.post('list-items', { receiptID })
+  instance.post('list_items', { receiptID })
     .then(response => {
       let status = response.data.statusCode;
 
@@ -127,7 +127,7 @@ function ReceiptDisplay() {
   const receiptID = receipt?.receiptID ?? "";
 
   function createReceipt() {
-    instance.post('/createReceipt', {})
+    instance.post('/create_receipt', {})
       .then(response => {
         if (response.data.statusCode === 200) {
           alert("Receipt created!");
@@ -152,7 +152,7 @@ function ReceiptDisplay() {
       return;
     }
 
-    instance.post('/addItem', {
+    instance.post('/add_item', {
       receiptID,
       name: itemName,
       id: itemID,
@@ -174,7 +174,7 @@ function ReceiptDisplay() {
       return;
     }
 
-    instance.post('/removeItem', {
+    instance.post('/remove_item', {
       receiptID,
       newid: itemID,
     })
@@ -192,7 +192,7 @@ function ReceiptDisplay() {
       return;
     }
 
-    instance.post('/editItem', {
+    instance.post('/edit_item', {
       receiptID,
       newid: item.id,
       newquantity: item.quantity,
@@ -214,7 +214,7 @@ function ReceiptDisplay() {
       alert("Create a receipt first!");
       return;
     }
-  instance.post("/submitReceipt", { receiptID })
+  instance.post("/submit_receipt", { receiptID })
     .then(res => {
       if (res.data.statusCode === 200) {
         alert("Receipt submitted!");
@@ -227,7 +227,7 @@ function ReceiptDisplay() {
       alert("Create a receipt first!");
       return;
     }
-    instance.post("/analyzeReceipt", { receiptID })
+    instance.post("/analyze_receipt", { receiptID })
       .then(res => {
         if (res.data.statusCode === 200) {
           alert("Receipt analyzed!");
