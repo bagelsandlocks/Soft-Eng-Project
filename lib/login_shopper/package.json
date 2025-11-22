@@ -1,0 +1,9 @@
+{
+  "name": "login_shopper",
+  "version": "1.0.0",
+  "description": "Lambda function to log in shoppers in the ShopComp database",
+  "main": "login_shopper.mjs",
+  "dependencies": {
+    "mysql2": "^3.15.1"
+  }
+}
