@@ -25,7 +25,7 @@ function LoginRegister() {
       return;
     }
     try {
-      const response = await instance.post("/RegisterShopper", {
+      const response = await instance.post("/register_shopper", {
         username: username,
         password: password,
       });
@@ -37,11 +37,16 @@ function LoginRegister() {
 
   async function loginShopper() {
     try {
-      const response = await instance.post('/LoginShopper', {
+      const response = await instance.post('/login_shopper', {
         username: logusername,
         password: logpassword,
       });
-      setLoginOutput(response.data);
+      const body = JSON.parse(response.data.body);
+    // Store shopperID and token in localStorage as the global variables
+    localStorage.setItem("shopperID", body.shopperID);
+    localStorage.setItem("token", body.token);
+    
+      setLoginOutput(body);
     } catch (err:any) {
       setLoginOutput({ error: err.message });
     }
@@ -95,7 +100,14 @@ function retrieveItems(
   receiptID: string,
   setItems: (items: Array<Item>) => void
 ) {
-  instance.post('list-items', { receiptID })
+    const shopperID = localStorage.getItem("shopperID");
+    const token = localStorage.getItem("token");
+    instance.post('list_items', 
+      { 
+        receiptID,
+        shopperID,
+        token
+    })
     .then(response => {
       let status = response.data.statusCode;
 
@@ -127,12 +139,18 @@ function ReceiptDisplay() {
   const receiptID = receipt?.receiptID ?? "";
 
   function createReceipt() {
-    instance.post('/CreateReceipt', {})
+    const shopperID = localStorage.getItem("shopperID");
+    const token = localStorage.getItem("token");
+    instance.post('/create_receipt', {
+      shopperID,
+      token
+    })
       .then(response => {
+        const body = JSON.parse(response.data.body);
         if (response.data.statusCode === 200) {
           alert("Receipt created!");
         }
-        setReceipt(response.data);   
+        setReceipt(body);   
         setItems([]);
       })
       .catch(error => console.error("Error creating receipt:", error));
@@ -151,8 +169,11 @@ function ReceiptDisplay() {
       alert("Create a receipt first!");
       return;
     }
-
-    instance.post('/AddItem', {
+    const shopperID = localStorage.getItem("shopperID");
+    const token = localStorage.getItem("token");
+    instance.post('/add_item', {
+      shopperID,
+      token,
       receiptID,
       name: itemName,
       id: itemID,
@@ -173,10 +194,13 @@ function ReceiptDisplay() {
       alert("Create a receipt first!");
       return;
     }
-
-    instance.post('/RemoveItem', {
+    const shopperID = localStorage.getItem("shopperID");
+    const token = localStorage.getItem("token");
+    instance.post('/remove_item', {
+      shopperID,
+      token,
       receiptID,
-      newid: itemID,
+      itemID, // removed itemID
     })
     .then(response => {
       if (response.data.statusCode === 200) {
@@ -191,13 +215,16 @@ function ReceiptDisplay() {
       alert("Create a receipt first!");
       return;
     }
-
-    instance.post('/EditItem', {
+    const shopperID = localStorage.getItem("shopperID");
+    const token = localStorage.getItem("token");
+    instance.post('/edit_item', {
+      shopperID,
+      token,
       receiptID,
-      newid: item.id,
-      newquantity: item.quantity,
-      newprice: item.price,
-      newname: item.name
+      itemID: item.id, 
+      quantity: item.quantity,
+      price: item.price,
+      name: item.name
     })
     .then(response => {
       if (response.data.statusCode === 200) {
@@ -214,7 +241,9 @@ function ReceiptDisplay() {
       alert("Create a receipt first!");
       return;
     }
-  instance.post("/SubmitReceipt", { receiptID })
+    const shopperID = localStorage.getItem("shopperID");
+    const token = localStorage.getItem("token");
+  instance.post("/submit_receipt", { receiptID, shopperID, token})
     .then(res => {
       if (res.data.statusCode === 200) {
         alert("Receipt submitted!");
@@ -227,7 +256,9 @@ function ReceiptDisplay() {
       alert("Create a receipt first!");
       return;
     }
-    instance.post("/AnalyzeReceipt", { receiptID })
+    const shopperID = localStorage.getItem("shopperID");
+    const token = localStorage.getItem("token");
+    instance.post("/analyze_receipt", { receiptID, shopperID, token})
       .then(res => {
         if (res.data.statusCode === 200) {
           alert("Receipt analyzed!");
