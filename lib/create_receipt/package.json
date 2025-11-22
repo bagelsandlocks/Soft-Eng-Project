@@ -1,0 +1,9 @@
+{
+  "name": "create_receipt",
+  "version": "1.0.0",
+  "description": "Lambda function to create a receipt for a shopper in the ShopComp database",
+  "main": "create_receipt.mjs",
+  "dependencies": {
+    "mysql2": "^3.15.1"
+  }
+}
