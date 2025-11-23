@@ -1,0 +1,9 @@
+{
+  "name": "add_item",
+  "version": "1.0.0",
+  "description": "Lambda function to add items to receipts",
+  "main": "add_item.mjs",
+  "dependencies": {
+    "mysql2": "^3.15.1"
+  }
+}
