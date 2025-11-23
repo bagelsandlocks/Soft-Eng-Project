@@ -136,6 +136,11 @@ function ReceiptDisplay() {
   const [quantity, setQuantity] = React.useState(0);
   const [receipt, setReceipt] = React.useState<Receipt | null>(null);
   const [category, setCategory] = React.useState("");
+    // NEW RECEIPT FIELDS
+  const [date, setDate] = React.useState("");
+  const [storeChain, setStoreChain] = React.useState("");
+  const [store, setStore] = React.useState("");
+
 
   const receiptID = receipt?.receiptID ?? "";
 
@@ -144,7 +149,11 @@ function ReceiptDisplay() {
     const token = localStorage.getItem("token");
     instance.post('/create_receipt', {
       shopperID,
-      token
+      token,
+      date,
+      storeChain,
+      store
+
     })
       .then(response => {
         const body = JSON.parse(response.data.body);
@@ -273,13 +282,17 @@ function ReceiptDisplay() {
     <div>
       <h1>Receipt Dashboard</h1>
 
-      <button onClick={createReceipt}>Create Receipt</button><br />
+      <input type="date" onChange={e => setDate(e.target.value)} /><br />
+      <input placeholder="Store Chain" onChange={e => setStoreChain(e.target.value)} /><br />
+      <input placeholder="Store" onChange={e => setStore(e.target.value)} /><br />
+      <button onClick={createReceipt}>Create Receipt</button><br /><br />
 
       <input placeholder="item name" disabled={!receiptID} onChange={e => setItemName(e.target.value)}  /><br/>
       <input placeholder="item price" type="number" disabled={!receiptID} onChange={e => setItemPrice(Number(e.target.value))} /><br/>
       <input placeholder="item quantity" type="number" disabled={!receiptID} onChange={e => setQuantity(Number(e.target.value))} /><br/>
       <input placeholder="item ID" disabled={!receiptID} onChange={e => setItemID(e.target.value)} /><br/>
       <input placeholder="item category" disabled={!receiptID} onChange={e => setCategory(e.target.value)} /><br/>
+      
 
       <button onClick={addItem} disabled={!receiptID}>Add Item</button>
 
