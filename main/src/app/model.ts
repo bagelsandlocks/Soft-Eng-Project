@@ -46,12 +46,14 @@ export class Item {
     id: string
     price: number
     quantity: number
+    category?: string
 
-    constructor( name: string, id: string, price: number, quantity: number) {
+    constructor( name: string, id: string, price: number, quantity: number, category?: string ) {
         this.name = name
         this.id = id
         this.price = price
         this.quantity = quantity
+        this.category = category
     }
 
 }
