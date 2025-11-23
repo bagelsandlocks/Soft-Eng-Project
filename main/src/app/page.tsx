@@ -140,6 +140,7 @@ function ReceiptDisplay() {
   const [date, setDate] = React.useState("");
   const [storeChain, setStoreChain] = React.useState("");
   const [store, setStore] = React.useState("");
+  const [receiptName, setReceiptName] = React.useState("");
 
 
   const receiptID = receipt?.receiptID ?? "";
@@ -152,7 +153,8 @@ function ReceiptDisplay() {
       token,
       date,
       storeChain,
-      store
+      store,
+      receiptName
 
     })
       .then(response => {
@@ -185,6 +187,7 @@ function ReceiptDisplay() {
       shopperID,
       token,
       receiptID,
+      receiptName,
       name: itemName,
       id: itemID,
       price: itemPrice,
@@ -211,6 +214,7 @@ function ReceiptDisplay() {
       shopperID,
       token,
       receiptID,
+      receiptName,
       itemID // removed itemID
     })
     .then(response => {
@@ -232,6 +236,7 @@ function ReceiptDisplay() {
       shopperID,
       token,
       receiptID,
+      receiptName,
       itemID: item.id, 
       quantity: item.quantity,
       price: item.price,
@@ -255,7 +260,7 @@ function ReceiptDisplay() {
     }
     const shopperID = localStorage.getItem("shopperID");
     const token = localStorage.getItem("token");
-  instance.post("/submit_receipt", { receiptID, shopperID, token})
+    instance.post("/submit_receipt", { receiptID, receiptName, shopperID, token})
     .then(res => {
       if (res.data.statusCode === 200) {
         alert("Receipt submitted!");
@@ -270,7 +275,7 @@ function ReceiptDisplay() {
     }
     const shopperID = localStorage.getItem("shopperID");
     const token = localStorage.getItem("token");
-    instance.post("/analyze_receipt", { receiptID, shopperID, token})
+    instance.post("/analyze_receipt", { receiptID, receiptName, shopperID, token})
       .then(res => {
         if (res.data.statusCode === 200) {
           alert("Receipt analyzed!");
@@ -285,6 +290,7 @@ function ReceiptDisplay() {
       <input type="date" onChange={e => setDate(e.target.value)} /><br />
       <input placeholder="Store Chain" onChange={e => setStoreChain(e.target.value)} /><br />
       <input placeholder="Store" onChange={e => setStore(e.target.value)} /><br />
+      <input placeholder="Receipt Name" onChange={e => setReceiptName(e.target.value)} /><br />
       <button onClick={createReceipt}>Create Receipt</button><br /><br />
 
       <input placeholder="item name" disabled={!receiptID} onChange={e => setItemName(e.target.value)}  /><br/>
