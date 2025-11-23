@@ -115,7 +115,7 @@ function retrieveItems(
         let vals = JSON.parse(response.data.body);
 
         let ret: Array<Item> = vals.items.map((i:any) =>
-          new Item(i.name, i.id, i.price, i.quantity)
+          new Item(i.name, i.id, i.price, i.quantity, i.category)
         );
 
         setItems(ret);
@@ -135,6 +135,7 @@ function ReceiptDisplay() {
   const [itemPrice, setItemPrice] = React.useState(0);
   const [quantity, setQuantity] = React.useState(0);
   const [receipt, setReceipt] = React.useState<Receipt | null>(null);
+  const [category, setCategory] = React.useState("");
 
   const receiptID = receipt?.receiptID ?? "";
 
@@ -178,7 +179,8 @@ function ReceiptDisplay() {
       name: itemName,
       id: itemID,
       price: itemPrice,
-      quantity: quantity
+      quantity: quantity,
+      category: category
     })
     .then(response => {
       if (response.data.statusCode === 200) {
@@ -200,7 +202,7 @@ function ReceiptDisplay() {
       shopperID,
       token,
       receiptID,
-      itemID, // removed itemID
+      itemID // removed itemID
     })
     .then(response => {
       if (response.data.statusCode === 200) {
@@ -224,7 +226,8 @@ function ReceiptDisplay() {
       itemID: item.id, 
       quantity: item.quantity,
       price: item.price,
-      name: item.name
+      name: item.name,
+      category: item.category
     })
     .then(response => {
       if (response.data.statusCode === 200) {
@@ -276,6 +279,7 @@ function ReceiptDisplay() {
       <input placeholder="item price" type="number" disabled={!receiptID} onChange={e => setItemPrice(Number(e.target.value))} /><br/>
       <input placeholder="item quantity" type="number" disabled={!receiptID} onChange={e => setQuantity(Number(e.target.value))} /><br/>
       <input placeholder="item ID" disabled={!receiptID} onChange={e => setItemID(e.target.value)} /><br/>
+      <input placeholder="item category" disabled={!receiptID} onChange={e => setCategory(e.target.value)} /><br/>
 
       <button onClick={addItem} disabled={!receiptID}>Add Item</button>
 
@@ -286,7 +290,7 @@ function ReceiptDisplay() {
           const newPrice = Number(prompt("New price", item.price.toString()) ?? item.price);
           const newQty = Number(prompt("New quantity", item.quantity.toString()) ?? item.quantity);
 
-          let updated = new Item(newName, item.id, newPrice, newQty);
+          let updated = new Item(newName, item.id, newPrice, newQty, item.category);
           editItem(updated);
         }}
    />
