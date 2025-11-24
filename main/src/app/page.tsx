@@ -218,7 +218,6 @@ function ReceiptDisplay() {
       shopperID,
       token,
       receiptID,
-      receiptName,
       itemID // removed itemID
     })
     .then(response => {
