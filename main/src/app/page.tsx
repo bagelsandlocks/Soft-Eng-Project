@@ -140,12 +140,14 @@ function ReceiptDisplay() {
   const [quantity, setQuantity] = React.useState(0);
   const [receipt, setReceipt] = React.useState<Receipt | null>(null);
   const [category, setCategory] = React.useState("");
-    // NEW RECEIPT FIELDS
+  // NEW RECEIPT FIELDS
   const [date, setDate] = React.useState("");
   const [storeChain, setStoreChain] = React.useState("");
   const [store, setStore] = React.useState("");
   const [receiptName, setReceiptName] = React.useState("");
   const [total, setTotal] = React.useState(0);
+  //ANALYZE RECEIPT
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
 
 
   const receiptID = receipt?.receiptID ?? "";
@@ -286,7 +288,23 @@ function ReceiptDisplay() {
     }
     const shopperID = localStorage.getItem("shopperID");
     const token = localStorage.getItem("token");
-    instance.post("/analyze_receipt", { receiptID, receiptName, shopperID, token})
+    
+    if(!selectedImage){
+      alert("Please select an image first!");
+      return;
+    }
+    const formdata = new FormData();
+    formdata.append("file", selectedImage);
+    formdata.append("receiptID", receiptID);
+    formdata.append("receiptName", receiptName);
+    formdata.append("shopperID", shopperID ?? "");
+    formdata.append("token", token ?? "");
+    
+    instance.post("/analyze_receipt", formdata, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    })
       .then(res => {
         if (res.data.statusCode === 200) {
           alert("Receipt analyzed!");
@@ -326,6 +344,12 @@ function ReceiptDisplay() {
         }}
    />
       <button onClick={submitReceipt} disabled={!receiptID}>Submit Receipt</button><br />
+      <h2>Analyze Receipt</h2>
+      <input type="file" accept="image/*" onChange={e => {
+        if (e.target.files && e.target.files.length > 0) {
+          setSelectedImage(e.target.files[0]);
+        }
+      }} /><br />
       <button onClick={analyzeReceipt} disabled={!receiptID}>Analyze Receipt</button>
     </div>
   );
