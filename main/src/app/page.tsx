@@ -98,7 +98,8 @@ function ItemList(props: { items: Array<Item>, onRemove: (id: string) => void, o
 
 function retrieveItems(
   receiptID: string,
-  setItems: (items: Array<Item>) => void
+  setItems: (items: Array<Item>) => void,
+  setTotal: (t: number) => void
 ) {
     const shopperID = localStorage.getItem("shopperID");
     const token = localStorage.getItem("token");
@@ -119,11 +120,14 @@ function retrieveItems(
         );
 
         setItems(ret);
+        const total = ret.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        setTotal(total);
       }
     })
     .catch(error => {
       console.error("Error retrieving items:", error);
       setItems([]);
+      setTotal(0);
     });
 }
 
@@ -136,11 +140,14 @@ function ReceiptDisplay() {
   const [quantity, setQuantity] = React.useState(0);
   const [receipt, setReceipt] = React.useState<Receipt | null>(null);
   const [category, setCategory] = React.useState("");
-    // NEW RECEIPT FIELDS
+  // NEW RECEIPT FIELDS
   const [date, setDate] = React.useState("");
   const [storeChain, setStoreChain] = React.useState("");
   const [store, setStore] = React.useState("");
   const [receiptName, setReceiptName] = React.useState("");
+  const [total, setTotal] = React.useState(0);
+  //ANALYZE RECEIPT
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
 
 
   const receiptID = receipt?.receiptID ?? "";
@@ -171,7 +178,7 @@ function ReceiptDisplay() {
 
   React.useEffect(() => {
     if (receiptID) {
-      retrieveItems(receiptID, setItems);
+      retrieveItems(receiptID, setItems, setTotal);
     }
   }, [receiptID]);
 
@@ -187,7 +194,6 @@ function ReceiptDisplay() {
       shopperID,
       token,
       receiptID,
-      receiptName,
       name: itemName,
       id: itemID,
       price: itemPrice,
@@ -196,7 +202,7 @@ function ReceiptDisplay() {
     })
     .then(response => {
       if (response.data.statusCode === 200) {
-        retrieveItems(receiptID, setItems);
+        retrieveItems(receiptID, setItems, setTotal);
       }
     })
     .catch(error => console.error("Error adding item:", error));
@@ -214,12 +220,11 @@ function ReceiptDisplay() {
       shopperID,
       token,
       receiptID,
-      receiptName,
       itemID // removed itemID
     })
     .then(response => {
       if (response.data.statusCode === 200) {
-        retrieveItems(receiptID, setItems);
+        retrieveItems(receiptID, setItems, setTotal);
       }
     })
     .catch(error => console.error("Error removing item:", error));
@@ -245,7 +250,7 @@ function ReceiptDisplay() {
     })
     .then(response => {
       if (response.data.statusCode === 200) {
-        retrieveItems(receiptID, setItems);
+        retrieveItems(receiptID, setItems, setTotal);
       }
     })
     .catch(error => console.error("Error editing item:", error));
@@ -260,7 +265,15 @@ function ReceiptDisplay() {
     }
     const shopperID = localStorage.getItem("shopperID");
     const token = localStorage.getItem("token");
-    instance.post("/submit_receipt", { receiptID, receiptName, shopperID, token})
+    instance.post("/submit_receipt", { 
+      receiptID,
+      receiptName,
+      shopperID,
+      token,
+      store,
+      storeChain,
+      date
+      })
     .then(res => {
       if (res.data.statusCode === 200) {
         alert("Receipt submitted!");
@@ -275,7 +288,23 @@ function ReceiptDisplay() {
     }
     const shopperID = localStorage.getItem("shopperID");
     const token = localStorage.getItem("token");
-    instance.post("/analyze_receipt", { receiptID, receiptName, shopperID, token})
+    
+    if(!selectedImage){
+      alert("Please select an image first!");
+      return;
+    }
+    const formdata = new FormData();
+    formdata.append("file", selectedImage);
+    formdata.append("receiptID", receiptID);
+    formdata.append("receiptName", receiptName);
+    formdata.append("shopperID", shopperID ?? "");
+    formdata.append("token", token ?? "");
+    
+    instance.post("/analyze_receipt", formdata, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    })
       .then(res => {
         if (res.data.statusCode === 200) {
           alert("Receipt analyzed!");
@@ -298,6 +327,7 @@ function ReceiptDisplay() {
       <input placeholder="item quantity" type="number" disabled={!receiptID} onChange={e => setQuantity(Number(e.target.value))} /><br/>
       <input placeholder="item ID" disabled={!receiptID} onChange={e => setItemID(e.target.value)} /><br/>
       <input placeholder="item category" disabled={!receiptID} onChange={e => setCategory(e.target.value)} /><br/>
+      <div>Total Amount: ${total.toFixed(2)}</div><br/>
       
 
       <button onClick={addItem} disabled={!receiptID}>Add Item</button>
@@ -314,6 +344,12 @@ function ReceiptDisplay() {
         }}
    />
       <button onClick={submitReceipt} disabled={!receiptID}>Submit Receipt</button><br />
+      <h2>Analyze Receipt</h2>
+      <input type="file" accept="image/*" onChange={e => {
+        if (e.target.files && e.target.files.length > 0) {
+          setSelectedImage(e.target.files[0]);
+        }
+      }} /><br />
       <button onClick={analyzeReceipt} disabled={!receiptID}>Analyze Receipt</button>
     </div>
   );
