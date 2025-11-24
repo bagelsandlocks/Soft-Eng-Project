@@ -1,0 +1,8 @@
+{
+  "name": "remove_item",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "mysql2": "^3.11.5"
+  }
+}
