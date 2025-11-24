@@ -1,0 +1,9 @@
+{
+  "name": "submit_receipt",
+  "version": "1.0.0",
+  "description": "Lambda function to submit a receipt for a shopper in the ShopComp database",
+  "main": "submit_receipt.mjs",
+  "dependencies": {
+    "mysql2": "^3.15.1"
+  }
+}
