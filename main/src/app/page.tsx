@@ -295,10 +295,12 @@ function ReceiptDisplay() {
     }
     const formdata = new FormData();
     formdata.append("file", selectedImage);
-    formdata.append("receiptID", receiptID);
     formdata.append("receiptName", receiptName);
     formdata.append("shopperID", shopperID ?? "");
     formdata.append("token", token ?? "");
+    formdata.append("date", date);
+    formdata.append("storeChain", storeChain);
+    formdata.append("store", store)
     
     instance.post("/analyze_receipt", formdata, {
       headers: {
