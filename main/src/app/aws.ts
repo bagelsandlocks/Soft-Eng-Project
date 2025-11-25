@@ -6,6 +6,6 @@ import axios from "axios"
 // Make sure that you update the URL below to match the Cloud Formation Stack API endpoint.
 // and add the suffix "/hangman" at the end
 export const instance = axios.create({
-    baseURL: 'https://XXXXXXXXXXX.amazonaws.com'
+    baseURL: 'https://0n71fujhgj.execute-api.us-east-1.amazonaws.com/prod/shopcomp'
 });
 
