@@ -1,0 +1,9 @@
+{
+  "name": "analyze_receipt",
+  "version": "1.0.0",
+  "main": "index.mjs",
+  "dependencies": {
+    "mysql2": "^3.15.3",
+    "openai": "^4.0.0"
+  }
+}
