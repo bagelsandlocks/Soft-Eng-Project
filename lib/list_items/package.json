@@ -4,6 +4,6 @@
   "description": "Lambda function to list items for a receipt in the ShopComp database",
   "main": "list_items.mjs",
   "dependencies": {
-    "mysql2": "^3.15.1"
+    "mysql2": "^3.15.3"
   }
 }

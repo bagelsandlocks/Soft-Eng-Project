@@ -4,6 +4,6 @@
   "description": "Lambda function to log in shoppers in the ShopComp database",
   "main": "login_shopper.mjs",
   "dependencies": {
-    "mysql2": "^3.15.1"
+    "mysql2": "^3.15.3"
   }
 }
