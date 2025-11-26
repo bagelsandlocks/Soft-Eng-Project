@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopComp API Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .endpoint {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #005a9e;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .response {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .error {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛒 ShopComp API Tester</h1>
+    
+    <div class="container">
+        <h2>API Base URL</h2>
+        <p><strong>https://qeyuwyqv30.execute-api.us-east-2.amazonaws.com/prod/shopcomp</strong></p>
+        <p>Status: <span id="status">Ready</span></p>
+    </div>
+
+    <div class="container">
+        <div class="endpoint">
+            <h3>1. Register Shopper</h3>
+            <input type="text" id="regUsername" placeholder="Username" value="testuser123">
+            <input type="password" id="regPassword" placeholder="Password" value="testpass123">
+            <button onclick="registerShopper()">Register</button>
+            <div id="regResponse" class="response" style="display:none;"></div>
+        </div>
+
+        <div class="endpoint">
+            <h3>2. Login Shopper</h3>
+            <input type="text" id="loginUsername" placeholder="Username" value="testuser123">
+            <input type="password" id="loginPassword" placeholder="Password" value="testpass123">
+            <button onclick="loginShopper()">Login</button>
+            <div id="loginResponse" class="response" style="display:none;"></div>
+        </div>
+
+        <div class="endpoint">
+            <h3>3. Create Receipt</h3>
+            <input type="text" id="shopperID" placeholder="Shopper ID (from login)">
+            <input type="text" id="token" placeholder="Token (from login)">
+            <input type="text" id="receiptName" placeholder="Receipt Name" value="Test Receipt">
+            <input type="date" id="receiptDate" value="2025-11-25">
+            <input type="text" id="storeChain" placeholder="Store Chain" value="Walmart">
+            <input type="text" id="store" placeholder="Store" value="Walmart Supercenter">
+            <button onclick="createReceipt()">Create Receipt</button>
+            <div id="receiptResponse" class="response" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://qeyuwyqv30.execute-api.us-east-2.amazonaws.com/prod/shopcomp';
+        
+        async function makeRequest(endpoint, data) {
+            try {
+                document.getElementById('status').textContent = 'Loading...';
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.text();
+                document.getElementById('status').textContent = 'Ready';
+                return {
+                    success: response.ok,
+                    status: response.status,
+                    data: result
+                };
+            } catch (error) {
+                document.getElementById('status').textContent = 'Error';
+                return {
+                    success: false,
+                    status: 'Network Error',
+                    data: error.message
+                };
+            }
+        }
+
+        function showResponse(elementId, response) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `response ${response.success ? 'success' : 'error'}`;
+            element.textContent = `Status: ${response.status}\n\nResponse:\n${response.data}`;
+        }
+
+        async function registerShopper() {
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            
+            const response = await makeRequest('/register_shopper', {
+                username: username,
+                password: password
+            });
+            
+            showResponse('regResponse', response);
+        }
+
+        async function loginShopper() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const response = await makeRequest('/login_shopper', {
+                username: username,
+                password: password
+            });
+            
+            showResponse('loginResponse', response);
+            
+            // If login successful, try to extract shopper ID and token
+            if (response.success) {
+                try {
+                    const data = JSON.parse(response.data);
+                    if (data.shopperID) {
+                        document.getElementById('shopperID').value = data.shopperID;
+                    }
+                    if (data.token) {
+                        document.getElementById('token').value = data.token;
+                    }
+                } catch (e) {
+                    // Ignore parsing errors
+                }
+            }
+        }
+
+        async function createReceipt() {
+            const shopperID = document.getElementById('shopperID').value;
+            const token = document.getElementById('token').value;
+            const receiptName = document.getElementById('receiptName').value;
+            const date = document.getElementById('receiptDate').value;
+            const storeChain = document.getElementById('storeChain').value;
+            const store = document.getElementById('store').value;
+            
+            const response = await makeRequest('/create_receipt', {
+                shopperID: shopperID,
+                token: token,
+                receiptName: receiptName,
+                date: date,
+                storeChain: storeChain,
+                store: store
+            });
+            
+            showResponse('receiptResponse', response);
+        }
+    </script>
+</body>
+</html>
